@@ -5,6 +5,7 @@ export interface IReader {
   name: string;
   isDirectory: boolean;
   path: string;
+  bookName?: string,
   children: IReader[];
 }
 

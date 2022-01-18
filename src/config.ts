@@ -55,3 +55,4 @@ export const TemplatePath = {
 };
 
 export const TREEVIEW_ID = 'wulingshan-menu';
+export const TREEVIEW_COLLECT = 'wulingshan-collect';

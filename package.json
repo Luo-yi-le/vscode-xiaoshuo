@@ -1,9 +1,9 @@
 {
   "name": "vscode-xiaoshuo",
   "license": "MIT",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "displayName": "vscode-xiaoshuo",
-  "description": "摸鱼",
+  "description": "摸鱼才是上班，不摸鱼那是打工。不会摸鱼的员工难拿年终奖",
   "keywords": [
     "纵横",
     "笔趣阁",
@@ -32,7 +32,7 @@
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
-      
+
       {
         "command": "wulingshan.command.zhuishushenqi",
         "title": "追书神器",
@@ -75,32 +75,37 @@
       },
       {
         "command": "wulingshan.command.collectList",
-        "title": "收藏列表",
+        "title": "刷新",
+        "category": "wulingshan"
+      },
+      {
+        "command": "wulingshan.command.clearCollect",
+        "title": "清空收藏",
         "category": "wulingshan"
       }
     ],
     "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "treeView",
-          "title": "小说",
-          "icon": "static/images/icon.svg"
-        }
-      ]
+      "activitybar": [{
+        "id": "treeView",
+        "title": "摸鱼小说家",
+        "icon": "static/images/icon.svg"
+      }]
     },
     "views": {
-      "treeView": [
-        {
+      "treeView": [{
           "id": "wulingshan-menu",
           "name": "目录"
+        },
+        {
+          "id": "wulingshan-collect",
+          "name": "收藏列表"
         }
       ]
     },
     "menus": {
-      "view/title": [
-        {
+      "view/title": [{
           "command": "wulingshan.command.collectList",
-          "when": "view == wulingshan-menu",
+          "when": "view == wulingshan-collect",
           "group": "navigation@1"
         },
         {
@@ -116,7 +121,7 @@
         {
           "command": "wulingshan.command.searchOnline",
           "when": "view == wulingshan-menu",
-          "group": "custom@1"
+          "group": "navigation@4"
         },
         {
           "command": "wulingshan.command.setChapterOrder",
@@ -132,18 +137,23 @@
           "command": "wulingshan.command.zongheng",
           "when": "view == wulingshan-menu",
           "group": "custom@7"
-        }
-      ],
-      "view/item/context": [
+        },
         {
+          "command": "wulingshan.command.clearCollect",
+          "when": "view == wulingshan-collect",
+          "group": "navigation@1"
+        }
+
+      ],
+      "view/item/context": [{
           "command": "wulingshan.command.collectBook",
           "when": "view == wulingshan-menu && rwulingshan.panel != collect",
           "group": "custom-item@1"
         },
         {
           "command": "wulingshan.command.cancelCollect",
-          "when": "view == wulingshan-menu && rwulingshan.panel == collect",
-          "group": "custom-item@2"
+          "when": "view == wulingshan-collect",
+          "group": "custom-item@1"
         }
       ]
     },
@@ -178,7 +188,8 @@
     }
   },
   "activationEvents": [
-    "*"
+    "onView:wulingshan-collect",
+    "onCommand:wulingshan.command.collectList"
   ],
   "scripts": {
     "build": "vsce package",

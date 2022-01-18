@@ -5,6 +5,7 @@ import { readerDriver } from '../reader';
 import { TreeNode } from '../explorer/TreeNode';
 import { explorerNodeManager } from '../explorer/explorerNodeManager';
 import { treeDataProvider } from '../explorer/treeDataProvider';
+import { registerTreeDataProvider } from '../explorer/registerTreeDataProvider';
 import { previewProvider } from '../webview/PreviewProvider';
 import { TemplatePath, Commands } from '../config';
 import { readerManager } from '../ReaderManager';
@@ -12,6 +13,7 @@ import * as config from '../utils/config';
 import { Notification } from '../utils/notification';
 import request from '../utils/request';
 import * as path from 'path';
+
 
 const showNotification = function (tip?: string, timer?: number) {
   const notification = new Notification(tip);
@@ -51,13 +53,14 @@ export const collectRefresh = async function () {
       treeNode.push(new TreeNode(v));
     });
 
-    treeDataProvider.fire();
+    registerTreeDataProvider.fire();
     explorerNodeManager.treeNode = treeNode;
   } catch (error) {
     console.warn(error);
   }
   notification.stop();
 };
+
 
 export const editCollectList = function () {
   workspace.openTextDocument(config.getConfigFile('__collect_list')).then((res) => {
@@ -84,6 +87,7 @@ export const collectBook = async function (treeNode: TreeNode) {
     list.push(treeNode.data);
     await config.setConfig('__collect_list', list);
     showNotification('收藏成功', 1000);
+    await collectRefresh()
   } catch (error) {
     console.log(error);
   }
@@ -122,8 +126,10 @@ const _searchOnline = async function (msg: string, brand?: string, name?: string
     const vConfig = workspace.getConfiguration('wulingshan');
     const onlineSite: string = vConfig.get('onlineSite', `${brand}`);
     const treeNode = await readerDriver.search(msg, `${brand}`);
+    console.log(treeNode)
     treeDataProvider.fire();
     explorerNodeManager.treeNode = treeNode;
+    console.log(explorerNodeManager.treeNode)
   } catch (error) {
     console.warn(error);
   }

@@ -1,9 +1,11 @@
+/* eslint-disable prefer-const */
 import { ExtensionContext, window, commands } from 'vscode';
 import { statusbar } from './Statusbar';
-import { Commands, TREEVIEW_ID } from './config';
+import { Commands, TREEVIEW_ID, TREEVIEW_COLLECT } from './config';
 import { store } from './utils/store';
 import workspaceConfiguration from './utils/workspaceConfiguration';
 import { treeDataProvider } from './explorer/treeDataProvider';
+import { registerTreeDataProvider } from './explorer/registerTreeDataProvider';
 import * as Path from 'path';
 import {
   openReaderWebView,
@@ -22,19 +24,19 @@ import {
   nextChapter,
   lastChapter,
   reLoadCookie,
-  searchBiQuGe,
 } from './commands';
 
 export async function activate(context: ExtensionContext): Promise<void> {
   console.log('activate');
   // store
+  
   store.extensionPath = context.extensionPath;
   store.booksPath = Path.join(context.extensionPath, 'book');
   store.globalStorageUri = context.globalStorageUri;
-
   context.subscriptions.push(
     statusbar,
     treeDataProvider,
+    registerTreeDataProvider,
     // 点击事件
     commands.registerCommand(Commands.openReaderWebView, openReaderWebView),
     // 刷新
@@ -78,7 +80,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
     commands.registerCommand(Commands.reLoadCookie, reLoadCookie),
     // 加载收藏列表
     commands.registerCommand(Commands.collectRefresh, () => {
-      commands.executeCommand('setContext', 'rwulingshan.panel', 'collect');
+      commands.executeCommand('setContext', 'rwulingshan.collect', 'collect');
       collectRefresh();
     }),
     // 编辑收藏列表
@@ -145,12 +147,19 @@ export async function activate(context: ExtensionContext): Promise<void> {
         workspaceConfiguration().update('chapterOrder', result.label, true);
       }
     }),
+
+
     // 注册 TreeView
     window.createTreeView(TREEVIEW_ID, {
       treeDataProvider: treeDataProvider,
       showCollapseAll: true
-    })
+    }),
+    window.createTreeView(TREEVIEW_COLLECT, {
+      treeDataProvider: registerTreeDataProvider,
+      showCollapseAll: true,
+    }),
   );
+  await collectRefresh();
   // localRefresh();
 }
 
