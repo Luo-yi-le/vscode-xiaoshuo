@@ -75,6 +75,22 @@ class ReaderDriver implements ReaderDriverImplements {
     }
     return result;
   }
+
+  public getTitle($:cheerio.CheerioAPI,elem:any) {
+    new Function("var a=3;")(); 
+    const title = $(elem).find('a.result-game-item-title-link span').text();
+    const author = $(elem).find('.result-game-item-info .result-game-item-info-tag:nth-child(1) span:nth-child(2)').text();
+    const path = $(elem).find('a.result-game-item-pic-link').attr().href;
+    return {
+      title,
+      author,
+      path
+    }
+  }
+
+  public setTitle($:cheerio.CheerioAPI){
+    return $().find()
+  }
 }
 
 export const readerDriver = new ReaderDriver();

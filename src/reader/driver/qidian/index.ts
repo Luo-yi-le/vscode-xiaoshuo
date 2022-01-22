@@ -6,6 +6,7 @@ import { ReaderDriver as ReaderDriverImplements } from '../../../@types';
 const DOMAIN = 'https://m.qidian.com';
 
 class ReaderDriver implements ReaderDriverImplements {
+  config: IConfig = {}
   public hasChapter() {
     return true;
   }
@@ -18,9 +19,13 @@ class ReaderDriver implements ReaderDriverImplements {
           const result: TreeNode[] = [];
           const $ = cheerio.load(res.body);
           $('.book-li').each(function (i: number, elem: any) {
-            const title = $(elem).find('.book-title').text();
-            const author = $(elem).find('.book-author').text().trim();
-            const bookIdMatch = $(elem).find('.book-layout').attr().href.match('book/(\\d+).');
+            // const title = $(elem).find('.book-title').text();
+            // const author = $(elem).find('.book-author').text().trim();
+            // const bookIdMatch = $(elem).find('.book-layout').attr().href.match('book/(\\d+).');
+
+            const title = new Function(`$`, `elem`, `return $(elem).find('.book-title').text()`)($, elem);
+            const author = new Function(`$`, `elem`, `return $(elem).find('.book-author').text().trim()`)($, elem);
+            const bookIdMatch = new Function(`$`, `elem`, `let href = $(elem).find('.book-layout').attr().href.split('/'); return href[href.length -1].split('.')[0];`)($, elem);
             if (bookIdMatch) {
               result.push(
                 new TreeNode(
@@ -29,7 +34,7 @@ class ReaderDriver implements ReaderDriverImplements {
                     name: `${title} - ${author}`,
                     isDirectory: true,
                     bookName: title,
-                    path: JSON.stringify({ bookId: bookIdMatch[1] })
+                    path: JSON.stringify({ bookId: bookIdMatch })
                   })
                 )
               );
@@ -97,3 +102,10 @@ class ReaderDriver implements ReaderDriverImplements {
 }
 
 export const readerDriver = new ReaderDriver();
+interface IConfig {
+  title?:'',
+  name?: '',
+  id?: '',
+  bookName?:'' ,
+  
+}
