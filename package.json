@@ -1,7 +1,7 @@
 {
   "name": "vscode-xiaoshuo",
   "license": "MIT",
-  "version": "1.0.23",
+  "version": "1.0.24",
   "displayName": "vscode-xiaoshuo",
   "description": "摸鱼才是上班，不摸鱼那是打工。不会摸鱼的员工难拿年终奖",
   "keywords": [
@@ -32,7 +32,6 @@
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
-
       {
         "command": "wulingshan.command.zhuishushenqi",
         "title": "追书神器",
@@ -85,14 +84,17 @@
       }
     ],
     "viewsContainers": {
-      "activitybar": [{
-        "id": "treeView",
-        "title": "摸鱼小说家",
-        "icon": "static/images/icon.svg"
-      }]
+      "activitybar": [
+        {
+          "id": "treeView",
+          "title": "摸鱼小说家",
+          "icon": "static/images/icon.svg"
+        }
+      ]
     },
     "views": {
-      "treeView": [{
+      "treeView": [
+        {
           "id": "wulingshan-menu",
           "name": "目录"
         },
@@ -103,7 +105,8 @@
       ]
     },
     "menus": {
-      "view/title": [{
+      "view/title": [
+        {
           "command": "wulingshan.command.collectList",
           "when": "view == wulingshan-collect",
           "group": "navigation@1"
@@ -143,9 +146,9 @@
           "when": "view == wulingshan-collect",
           "group": "navigation@1"
         }
-
       ],
-      "view/item/context": [{
+      "view/item/context": [
+        {
           "command": "wulingshan.command.collectBook",
           "when": "view == wulingshan-menu && rwulingshan.panel != collect",
           "group": "custom-item@1"
