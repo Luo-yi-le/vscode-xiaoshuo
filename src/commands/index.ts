@@ -1,30 +1,15 @@
-import { open } from '../utils/index';
-import { store } from '../utils/store';
 import { window, workspace } from 'vscode';
+import * as path from 'path';
 import { readerDriver } from '../reader';
-import { TreeNode } from '../explorer/TreeNode';
-import { explorerNodeManager } from '../explorer/explorerNodeManager';
-import { treeDataProvider } from '../explorer/treeDataProvider';
-import { registerTreeDataProvider } from '../explorer/registerTreeDataProvider';
+import { treeDataProvider, registerTreeDataProvider, explorerNodeManager, TreeNode } from '../explorer';
+import { open, store, request, showNotification, Notification, config } from '../utils';
 import { previewProvider } from '../webview/PreviewProvider';
 import { TemplatePath, Commands } from '../config';
 import { readerManager } from '../ReaderManager';
-import * as config from '../utils/config';
-import { Notification } from '../utils/notification';
-import request from '../utils/request';
-import * as path from 'path';
+import { browseBook, browseRefresh } from './browse'
 
-
-const showNotification = function (tip?: string, timer?: number) {
-  const notification = new Notification(tip);
-  if (timer) {
-    setTimeout(() => {
-      notification.stop();
-    }, timer);
-  }
-};
-
-export const openReaderWebView = function (treeNode: TreeNode) {
+export const openReaderWebView = async function (treeNode: TreeNode) {
+  await browseBook(treeNode)
   readerDriver.getContent(treeNode).then(function (data: string) {
     previewProvider.show(data, treeNode);
   });
@@ -48,7 +33,7 @@ export const collectRefresh = async function () {
   try {
     const treeNode: TreeNode[] = [];
     const list = await config.getConfig('__collect_list', []);
-    console.log('__collect_list', list);
+    // console.log('__collect_list', list);
     list.forEach((v: any) => {
       treeNode.push(new TreeNode(v));
     });
@@ -72,10 +57,11 @@ export const editCollectList = function () {
 
 export const collectBook = async function (treeNode: TreeNode) {
   try {
+    const node:TreeNode = treeNode.isDirectory? treeNode : await readerDriver.getTreeNode(treeNode);
     const list = await config.getConfig('__collect_list', []);
     let isExists = false;
     for (let i = 0; i < list.length; i++) {
-      if (treeNode.path === list[i].path && treeNode.type === list[i].type) {
+      if (node.path === list[i].path && node.type === list[i].type) {
         isExists = true;
         break;
       }
@@ -84,7 +70,7 @@ export const collectBook = async function (treeNode: TreeNode) {
       showNotification('已收藏该书', 1000);
       return;
     }
-    list.push(treeNode.data);
+    list.push(node.data);
     await config.setConfig('__collect_list', list);
     showNotification('收藏成功', 1000);
     await collectRefresh()
@@ -110,10 +96,17 @@ export const cancelCollect = async function (treeNode: TreeNode) {
   await collectRefresh()
 };
 
-export const clearCollect = async function () {
-  await config.setConfig('__collect_list', []);
-  showNotification('清空收藏成功', 1000);
+export const clearDataBase =async function(database_name: string, data?: any) {
+  await config.setConfig(database_name, data || []);
+  showNotification('清空成功', 1000);
 };
+export const clearCollect= async() =>(await clearDataBase('__collect_list'), await collectRefresh());
+export const clearBrowse= async () =>(await clearDataBase('__browse_list'), await browseRefresh())
+
+// export const clearCollect = async function () {
+//   await config.setConfig('__collect_list', []);
+//   showNotification('清空成功', 1000);
+// };
 
 export const openLocalDirectory = function () {
   open(readerDriver.getFileDir());
@@ -126,10 +119,9 @@ const _searchOnline = async function (msg: string, brand?: string, name?: string
     const vConfig = workspace.getConfiguration('wulingshan');
     const onlineSite: string = vConfig.get('onlineSite', `${brand}`);
     const treeNode = await readerDriver.search(msg, `${brand}`);
-    console.log(treeNode)
+    // console.log(treeNode)
     treeDataProvider.fire();
     explorerNodeManager.treeNode = treeNode;
-    console.log(explorerNodeManager.treeNode)
   } catch (error) {
     console.warn(error);
   }
@@ -232,6 +224,9 @@ export const reLoadCookie = function () {
   showNotification('重新加载cookie完成~', 1000);
 };
 
+export {
+  browseRefresh,
+}
 
 const handleCommand = async function (commands: string, message: string) {
   let cmd: string = Commands.searchOnline;

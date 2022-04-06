@@ -70,6 +70,17 @@
             mVscodeHelper.on(dataset.cmd, dataset.data || {});
           });
         });
+
+        document.onkeydown = function(event) {
+          const e = event || window.event || arguments.callee.caller.arguments[0];
+          if(e.keyCode == 37) {
+            mVscodeHelper.on('lastChapter',{});
+          }
+          if(e.keyCode == 39) {
+            mVscodeHelper.on('nextChapter', {});
+          }
+        }
+
         document.oncontextmenu = function (event) {
           var menu = document.querySelector('#contextmenu');
           var event = event || window.event;

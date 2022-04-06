@@ -1,17 +1,19 @@
 /* eslint-disable prefer-const */
 import { ExtensionContext, window, commands } from 'vscode';
 import { statusbar } from './Statusbar';
-import { Commands, TREEVIEW_ID, TREEVIEW_COLLECT } from './config';
+import { Commands, TREEVIEW_ID, TREEVIEW_COLLECT, TREEVIEW_BROWSE } from './config';
 import { store } from './utils/store';
 import workspaceConfiguration from './utils/workspaceConfiguration';
-import { treeDataProvider } from './explorer/treeDataProvider';
-import { registerTreeDataProvider } from './explorer/registerTreeDataProvider';
+import { treeDataProvider, registerTreeDataProvider, browseProvider } from './explorer'
+// import { treeDataProvider } from './explorer/treeDataProvider';
+// import { registerTreeDataProvider } from './explorer/registerTreeDataProvider';
 import * as Path from 'path';
 import {
   openReaderWebView,
   openLocalDirectory,
   searchOnline,
   collectRefresh,
+  browseRefresh,
   editCollectList,
   collectBook,
   cancelCollect,
@@ -24,6 +26,7 @@ import {
   nextChapter,
   lastChapter,
   reLoadCookie,
+  clearBrowse,
 } from './commands';
 
 export async function activate(context: ExtensionContext): Promise<void> {
@@ -91,6 +94,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
     commands.registerCommand(Commands.cancelCollect, cancelCollect),
     // 清空收藏
     commands.registerCommand(Commands.clearCollect, clearCollect),
+    // 清空浏览记录
+    commands.registerCommand(Commands.clearBrowse, clearBrowse),
     // 设置
     commands.registerCommand(Commands.setOnlineSite, async () => {
       const onlineSite = workspaceConfiguration().get('onlineSite');
@@ -158,8 +163,13 @@ export async function activate(context: ExtensionContext): Promise<void> {
       treeDataProvider: registerTreeDataProvider,
       showCollapseAll: true,
     }),
+    window.createTreeView(TREEVIEW_BROWSE, {
+      treeDataProvider: browseProvider,
+      showCollapseAll: true,
+    }),
   );
   await collectRefresh();
+  await browseRefresh();
   // localRefresh();
 }
 

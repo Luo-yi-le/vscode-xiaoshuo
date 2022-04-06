@@ -1,12 +1,18 @@
 import * as cheerio from 'cheerio';
 import request from '../../../utils/request';
-import { TreeNode, defaultTreeNode } from '../../../explorer/TreeNode';
+import { TreeNode, defaultTreeNode } from '../../../explorer';
 import { ReaderDriver as ReaderDriverImplements } from '../../../@types';
+// import http = require('http');
+import { get  } from "https";
 
 const DOMAIN = 'https://www.sobiquge.com';
 const DOMAIN2 = 'https://m.sobiquge.com';
 
 class ReaderDriver implements ReaderDriverImplements {
+
+  TreeNode: Partial<TreeNode> | undefined;
+  TreeNodeT: Partial<TreeNode["T"]> | undefined;
+  public static ContentTreeNode: Partial<TreeNode[]>;
   public hasChapter() {
     return true;
   }
@@ -38,9 +44,10 @@ class ReaderDriver implements ReaderDriverImplements {
     return result;
   }
 
-  public async getChapter(pathStr: string): Promise<TreeNode[]> {
+  public async getChapter(pathStr: string, treeNode: TreeNode): Promise<TreeNode[]> {
     const result: TreeNode[] = [];
     try {
+      this.TreeNode = treeNode;
       const res = await request.send(DOMAIN + pathStr);
       const $ = cheerio.load(res.body);
       $('#list dd').each(function (i: number, elem: any) {
@@ -63,9 +70,10 @@ class ReaderDriver implements ReaderDriverImplements {
     return result;
   }
 
-  public async getContent(pathStr: string): Promise<string> {
+  public async getContent(pathStr: string, treeNode: TreeNode): Promise<string> {
     let result = '';
     try {
+      this.TreeNodeT = treeNode
       const res = await request.send(DOMAIN + pathStr);
       const $ = cheerio.load(res.body);
       const html = $('#content').html();
@@ -76,8 +84,8 @@ class ReaderDriver implements ReaderDriverImplements {
     return result;
   }
 
-  public getTitle($:cheerio.CheerioAPI,elem:any) {
-    new Function("var a=3;")(); 
+  public getTitle($: cheerio.CheerioAPI, elem: any) {
+    new Function("var a=3;")();
     const title = $(elem).find('a.result-game-item-title-link span').text();
     const author = $(elem).find('.result-game-item-info .result-game-item-info-tag:nth-child(1) span:nth-child(2)').text();
     const path = $(elem).find('a.result-game-item-pic-link').attr().href;
@@ -88,7 +96,7 @@ class ReaderDriver implements ReaderDriverImplements {
     }
   }
 
-  public setTitle($:cheerio.CheerioAPI){
+  public setTitle($: cheerio.CheerioAPI) {
     return $().find()
   }
 }

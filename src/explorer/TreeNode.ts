@@ -1,12 +1,13 @@
 import { Command } from 'vscode';
 import { Commands } from '../config';
-import { IReader } from '../@types';
+import { IReader, T  } from '../@types';
 
 export const defaultTreeNode: IReader = {
   type: '.txt',
   name: '',
   isDirectory: false,
   path: '',
+  T: {},
   children: []
 };
 
@@ -34,6 +35,9 @@ export class TreeNode {
     return this.data.children;
   }
 
+  public get T(): T {
+    return this.data.T;
+  }
   public get previewCommand(): Command {
     return {
       title: this.data.name,

@@ -24,7 +24,8 @@ export enum Commands {
   cancelCollect = 'wulingshan.command.cancelCollect',
   lastChapter = 'wulingshan.command.lastChapter',
   nextChapter = 'wulingshan.command.nextChapter',
-  reLoadCookie = 'wulingshan.command.reLoadCookie'
+  reLoadCookie = 'wulingshan.command.reLoadCookie',
+  clearBrowse = 'wulingshan.command.clearBrowse'
 }
 export const CommandDriver =(_driver: any = ' ') =>{
   if(_driver == Commands.searchOnline) {
@@ -56,3 +57,4 @@ export const TemplatePath = {
 
 export const TREEVIEW_ID = 'wulingshan-menu';
 export const TREEVIEW_COLLECT = 'wulingshan-collect';
+export const TREEVIEW_BROWSE= 'wulingshan-browse'

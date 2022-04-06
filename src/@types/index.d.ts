@@ -6,7 +6,18 @@ export interface IReader {
   isDirectory: boolean;
   path: string;
   bookName?: string,
+  T: T,
   children: IReader[];
+}
+
+// type T = IReader
+export type T ={
+  type?: string;
+  name?: string;
+  isDirectory?: boolean;
+  path?: string;
+  bookName?: string,
+  children?: IReader[];
 }
 
 export interface IWebviewOption {
@@ -21,8 +32,9 @@ interface IWebViewMessage {
 }
 
 interface ReaderDriver {
-  hasChapter: (path: string) => void;
-  getChapter: (pathStr: string) => void;
-  getContent: (path: string) => Promise<string>;
+  hasChapter: (path: string, T?: any) => void;
+  getChapter: (path: string, T?: any ) => void;
+  getContent: (path: string, T?: any) => Promise<string>;
   search?: (keyword: string) => void;
+  browse?: (jsonName: string, T?: any) => void
 }
