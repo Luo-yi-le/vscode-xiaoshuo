@@ -89,14 +89,17 @@
       }
     ],
     "viewsContainers": {
-      "activitybar": [{
-        "id": "treeView",
-        "title": "摸鱼小说家",
-        "icon": "static/images/icon.svg"
-      }]
+      "activitybar": [
+        {
+          "id": "treeView",
+          "title": "摸鱼小说家",
+          "icon": "static/images/icon.svg"
+        }
+      ]
     },
     "views": {
-      "treeView": [{
+      "treeView": [
+        {
           "id": "wulingshan-menu",
           "name": "目录"
         },
@@ -111,7 +114,8 @@
       ]
     },
     "menus": {
-      "view/title": [{
+      "view/title": [
+        {
           "command": "wulingshan.command.collectList",
           "when": "view == wulingshan-collect",
           "group": "navigation@1"
@@ -157,9 +161,9 @@
           "group": "navigation@1"
           
         }
-
       ],
-      "view/item/context": [{
+      "view/item/context": [
+        {
           "command": "wulingshan.command.collectBook",
           "when": "view == wulingshan-menu && rwulingshan.panel != collect",
           "group": "custom-item@1"

@@ -6,8 +6,8 @@ import { ReaderDriver as ReaderDriverImplements } from '../../../@types';
 import { get  } from "https";
 
 const DOMAIN = 'https://www.sobiquge.com';
-const DOMAIN2 = 'https://m.sobiquge.com';
-
+const DOMAIN2 = 'https://wap.sobiquge.com';
+// https://www.bige7.com/
 class ReaderDriver implements ReaderDriverImplements {
 
   TreeNode: Partial<TreeNode> | undefined;
@@ -26,6 +26,7 @@ class ReaderDriver implements ReaderDriverImplements {
         const title = $(elem).find('a.result-game-item-title-link span').text();
         const author = $(elem).find('.result-game-item-info .result-game-item-info-tag:nth-child(1) span:nth-child(2)').text();
         const path = $(elem).find('a.result-game-item-pic-link').attr().href;
+        
         result.push(
           new TreeNode(
             Object.assign({}, defaultTreeNode, {
@@ -41,11 +42,14 @@ class ReaderDriver implements ReaderDriverImplements {
     } catch (error) {
       console.warn(error);
     }
+    console.log(result)
     return result;
   }
 
   public async getChapter(pathStr: string, treeNode: TreeNode): Promise<TreeNode[]> {
     const result: TreeNode[] = [];
+    console.log(pathStr)
+    console.log(DOMAIN +pathStr)
     try {
       this.TreeNode = treeNode;
       const res = await request.send(DOMAIN + pathStr);
