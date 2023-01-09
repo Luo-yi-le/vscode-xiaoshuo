@@ -43,10 +43,9 @@ class ReaderDriver {
   }
 
   public getContent(treeNode: TreeNode): Promise<string> {
-    console.log(treeNode);
     return new Promise(function (resolve) {
       import('./driver/' + treeNode.type.substr(1))
-        .then(({ readerDriver }) => readerDriver.getContent(treeNode.path))
+        .then(({ readerDriver }) => readerDriver.getContent(treeNode.path, treeNode))
         .then((text: string) => {
           const html = template(store.extensionPath, TemplatePath.templateHtml, {
             progress: config.get(treeNode.path, 'progress'),
@@ -62,7 +61,7 @@ class ReaderDriver {
     return new Promise(function (resolve) {
       import('./driver/' + treeNode.type.substr(1))
         .then(({ readerDriver }) => {
-          resolve(readerDriver.getChapter(treeNode.path));
+          resolve(readerDriver.getChapter(treeNode.path, treeNode));
         })
         .catch(() => {
           resolve([]);
@@ -123,7 +122,7 @@ class ReaderDriver {
       });
     } catch (error) {
       console.log(error);
-      window.showWarningMessage('读取目录失败, 请检测您的目录设置');
+      window.showWarningMessage('读取目录失败, 请检查您的目录设置');
     }
     return result;
   }
@@ -154,6 +153,18 @@ class ReaderDriver {
           resolve(readerDriver.search(keyword, optionsPath));
         })
         .catch((error) => reject(error));
+    });
+  }
+
+  public getTreeNode(treeNode: TreeNode): Promise<any> {
+    return new Promise(function (resolve) {
+      import('./driver/' + treeNode.type.substr(1))
+        .then(({ readerDriver }) => {
+          resolve(readerDriver.TreeNode);
+        })
+        .catch(() => {
+          resolve(false);
+        });
     });
   }
 }

@@ -25,6 +25,7 @@ export enum Commands {
   lastChapter = 'wulingshan.command.lastChapter',
   nextChapter = 'wulingshan.command.nextChapter',
   reLoadCookie = 'wulingshan.command.reLoadCookie',
+  clearBrowse = 'wulingshan.command.clearBrowse',
 
   setbiqugeConfig = 'wulingshan.command.setbiqugeConfig',
 }
@@ -58,3 +59,4 @@ export const TemplatePath = {
 
 export const TREEVIEW_ID = 'wulingshan-menu';
 export const TREEVIEW_COLLECT = 'wulingshan-collect';
+export const TREEVIEW_BROWSE= 'wulingshan-browse'

@@ -1,10 +1,12 @@
 /* eslint-disable prefer-const */
 import { ExtensionContext, window, commands } from 'vscode';
 import { statusbar } from './Statusbar';
-import { Commands, TREEVIEW_ID, TREEVIEW_COLLECT } from './config';
+import { Commands, TREEVIEW_ID, TREEVIEW_COLLECT, TREEVIEW_BROWSE } from './config';
 import { store } from './utils/store';
 import workspaceConfiguration from './utils/workspaceConfiguration';
-import { registerTreeDataProvider, treeDataProvider } from './explorer';
+import { treeDataProvider, registerTreeDataProvider, browseProvider } from './explorer'
+// import { treeDataProvider } from './explorer/treeDataProvider';
+// import { registerTreeDataProvider } from './explorer/registerTreeDataProvider';
 import * as Path from 'path';
 import { TreeNode } from './explorer/TreeNode';
 import {
@@ -12,6 +14,7 @@ import {
   openLocalDirectory,
   searchOnline,
   collectRefresh,
+  browseRefresh,
   editCollectList,
   collectBook,
   cancelCollect,
@@ -24,6 +27,7 @@ import {
   nextChapter,
   lastChapter,
   reLoadCookie,
+  clearBrowse,
 } from './commands';
 
 export async function activate(context: ExtensionContext): Promise<void> {
@@ -96,8 +100,15 @@ export async function activate(context: ExtensionContext): Promise<void> {
     commands.registerCommand(Commands.cancelCollect, cancelCollect),
     // 清空收藏
     commands.registerCommand(Commands.clearCollect, clearCollect),
+    // 清空浏览记录
+    commands.registerCommand(Commands.clearBrowse, clearBrowse),
 
-    commands.registerCommand(Commands.setbiqugeConfig, async ()=>{}),
+    commands.registerCommand(Commands.setbiqugeConfig, async ()=>{
+      const biqugeConfig = workspaceConfiguration().get('biqugeConfig');
+      if(biqugeConfig) {
+        workspaceConfiguration().update('biqugeConfig', biqugeConfig, true);
+      }
+    }),
 
     // 设置
     commands.registerCommand(Commands.setOnlineSite, async () => {
@@ -166,8 +177,13 @@ export async function activate(context: ExtensionContext): Promise<void> {
       treeDataProvider: registerTreeDataProvider,
       showCollapseAll: true,
     }),
+    window.createTreeView(TREEVIEW_BROWSE, {
+      treeDataProvider: browseProvider,
+      showCollapseAll: true,
+    }),
   );
   await collectRefresh();
+  await browseRefresh();
   // localRefresh();
 }
 

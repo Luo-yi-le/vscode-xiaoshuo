@@ -9,6 +9,6 @@
     "rootDir": "src",
     "strict": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "out/test.js"],
   "exclude": ["node_modules", ".vscode-test"]
 }

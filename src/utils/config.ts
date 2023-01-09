@@ -93,6 +93,7 @@ export function getConfig(path: string, defaultVal: any = false): Promise<any> {
 export function setConfig(path: string, value: any) {
   return new Promise((resolve, reject) => {
     const encoder = new TextEncoder();
+    console.log(Uri.joinPath(store.globalStorageUri, path + '.config.json'))
     workspace.fs.writeFile(Uri.joinPath(store.globalStorageUri, path + '.config.json'), encoder.encode(JSON.stringify(value))).then(() => {
       resolve(true);
     }, () => {

@@ -6,11 +6,19 @@ export interface IReader {
   isDirectory: boolean;
   path: string;
   bookName?: string,
+  T: T,
   children: IReader[];
-  difference: string
+}
+ 
+export type T ={
+  type?: string;
+  name?: string;
+  isDirectory?: boolean;
+  path?: string;
+  bookName?: string,
+  children?: IReader[];
 }
 
-export type difference  = 'tv' | 'book';
 
 export interface IWebviewOption {
   title: string;
@@ -24,10 +32,11 @@ interface IWebViewMessage {
 }
 
 interface ReaderDriver {
-  hasChapter: (path: string) => void;
-  getChapter: (pathStr: string) => void;
-  getContent: (path: string) => Promise<string>;
+  hasChapter: (path: string, T?: any) => void;
+  getChapter: (path: string, T?: any ) => void;
+  getContent: (path: string, T?: any) => Promise<string>;
   search?: (keyword: string, optionsPath?: string) => void;
+  browse?: (jsonName: string, T?: any) => void
 }
 
 export interface DriverOptions{ 

@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio';
 import request from '../../../utils/request';
-import { TreeNode, defaultTreeNode } from '../../../explorer/TreeNode';
+import { TreeNode, defaultTreeNode } from '../../../explorer';
 import { ReaderDriver as ReaderDriverImplements, DriverOptions, DriverOptionsConfig } from '../../../@types';
 import * as fs from 'fs';
 
@@ -8,6 +8,10 @@ const DOMAIN = 'https://www.wyill.com';
 const DOMAIN2 = 'https://www.wyill.com/s?q=';
 // https://www.bige7.com/
 class ReaderDriver implements ReaderDriverImplements {
+
+  TreeNode: Partial<TreeNode> | undefined;
+  TreeNodeT: Partial<TreeNode["T"]> | undefined;
+  public static ContentTreeNode: Partial<TreeNode[]>;
 
   Options: DriverOptionsConfig | undefined 
 
@@ -62,11 +66,12 @@ class ReaderDriver implements ReaderDriverImplements {
     return result;
   }
 
-  public async getChapter(pathStr: string): Promise<TreeNode[]> {
+  public async getChapter(pathStr: string, treeNode: TreeNode): Promise<TreeNode[]> {
     const result: TreeNode[] = [];
     const chapterList = this.Options?.chapterList;
     let url = chapterList?.url ? chapterList?.url : (this.Options?.url ? this.Options?.url : DOMAIN2)
     try {
+      this.TreeNode = treeNode;
       const res = await request.send(url +pathStr);
       const $ = cheerio.load(res.body);
       $(chapterList?.container).each(function (i: number, elem: any) {
@@ -89,12 +94,13 @@ class ReaderDriver implements ReaderDriverImplements {
     return result;
   }
 
-  public async getContent(pathStr: string): Promise<string> {
+  public async getContent(pathStr: string, treeNode: TreeNode): Promise<string> {
     let result = '';
     const contenthtml = this.Options?.content;
     let url = contenthtml?.url ? contenthtml?.url : (this.Options?.url ? this.Options?.url : DOMAIN2)
     try {
-      const res = await request.send(DOMAIN + pathStr);
+      this.TreeNodeT = treeNode
+      const res = await request.send(url + pathStr);
       const $ = cheerio.load(res.body);
       const html = $(contenthtml?.content).html();
       let content = html || '';
@@ -104,9 +110,9 @@ class ReaderDriver implements ReaderDriverImplements {
             content = content.replace(item, '')
           })
         }
-        // content = html.replace('请收藏本站：https://www.wyill.com。笔趣阁手机版：https://m.wyill.com', '');
-        // content =content.replace('『点此报错』', '');
-        // content =content.replace('『加入书签』', '');
+        // content = html.replace('���ղر�վ��https://www.wyill.com����Ȥ���ֻ��棺https://m.wyill.com', '');
+        // content =content.replace('����˱�����', '');
+        // content =content.replace('��������ǩ��', '');
       }
       result = content || '';
     } catch (error) {
@@ -115,8 +121,8 @@ class ReaderDriver implements ReaderDriverImplements {
     return result;
   }
 
-  public getTitle($:cheerio.CheerioAPI,elem:any) {
-    new Function("var a=3;")(); 
+  public getTitle($: cheerio.CheerioAPI, elem: any) {
+    new Function("var a=3;")();
     const title = $(elem).find('a.result-game-item-title-link span').text();
     const author = $(elem).find('.result-game-item-info .result-game-item-info-tag:nth-child(1) span:nth-child(2)').text();
     const path = $(elem).find('a.result-game-item-pic-link').attr().href;
@@ -127,7 +133,7 @@ class ReaderDriver implements ReaderDriverImplements {
     }
   }
 
-  public setTitle($:cheerio.CheerioAPI){
+  public setTitle($: cheerio.CheerioAPI) {
     return $().find()
   }
 }

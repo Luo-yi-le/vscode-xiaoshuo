@@ -1,7 +1,7 @@
 {
   "name": "vscode-xiaoshuo",
   "license": "MIT",
-  "version": "1.0.24",
+  "version": "2.0.1",
   "displayName": "vscode-xiaoshuo",
   "description": "摸鱼才是上班，不摸鱼那是打工。不会摸鱼的员工难拿年终奖",
   "keywords": [
@@ -106,8 +106,7 @@
         {
           "id": "wulingshan-collect",
           "name": "收藏列表"
-        }
-        ,
+        },
         {
           "id": "wulingshan-browse",
           "name": "浏览记录"
@@ -160,7 +159,6 @@
           "command": "wulingshan.command.clearBrowse",
           "when": "view == wulingshan-browse",
           "group": "navigation@1"
-          
         }
       ],
       "view/item/context": [
@@ -250,6 +248,7 @@
     "iconv-lite": "^0.5.0",
     "open": "^7.0.0",
     "tough-cookie": "^4.0.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "vsce": "^2.15.0"
   }
 }
