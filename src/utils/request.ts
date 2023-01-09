@@ -2,7 +2,7 @@ import got = require('got');
 import tough = require('tough-cookie');
 import { HttpProxyAgent, HttpsProxyAgent } from 'hpagent';
 import workspaceConfiguration from './workspaceConfiguration';
-
+import FormData = require('form-data');
 interface cookiesConfig {
   url: string;
   cookie: string;
@@ -57,6 +57,14 @@ class Requset {
         agent: this.agent
       });
     }
+  }
+
+  post(url:string, options:any) {
+    return got.post(url, {
+      ...options,
+      cookieJar: this.cookieJar,
+      agent: this.agent,
+    })
   }
 }
 

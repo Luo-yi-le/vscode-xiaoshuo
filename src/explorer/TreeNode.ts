@@ -7,7 +7,8 @@ export const defaultTreeNode: IReader = {
   name: '',
   isDirectory: false,
   path: '',
-  children: []
+  children: [],
+  difference: 'book'
 };
 
 export class TreeNode {
@@ -15,6 +16,9 @@ export class TreeNode {
 
   public get name(): string {
     return this.data.name;
+  }
+  public get difference(): string {
+    return this.data.difference;
   }
   public get type(): string {
     return this.data.type;

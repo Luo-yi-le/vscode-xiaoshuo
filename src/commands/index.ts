@@ -3,9 +3,7 @@ import { store } from '../utils/store';
 import { window, workspace } from 'vscode';
 import { readerDriver } from '../reader';
 import { TreeNode } from '../explorer/TreeNode';
-import { explorerNodeManager } from '../explorer/explorerNodeManager';
-import { treeDataProvider } from '../explorer/treeDataProvider';
-import { registerTreeDataProvider } from '../explorer/registerTreeDataProvider';
+import { registerTreeDataProvider, treeDataProvider, explorerNodeManager } from '../explorer';
 import { previewProvider } from '../webview/PreviewProvider';
 import { TemplatePath, Commands } from '../config';
 import { readerManager } from '../ReaderManager';
@@ -27,7 +25,7 @@ const showNotification = function (tip?: string, timer?: number) {
 export const openReaderWebView = function (treeNode: TreeNode) {
   readerDriver.getContent(treeNode).then(function (data: string) {
     previewProvider.show(data, treeNode);
-  });
+  }); 
 };
 
 export const localRefresh = async function () {
@@ -126,10 +124,8 @@ const _searchOnline = async function (msg: string, brand?: string, name?: string
     const vConfig = workspace.getConfiguration('wulingshan');
     const onlineSite: string = vConfig.get('onlineSite', `${brand}`);
     const treeNode = await readerDriver.search(msg, `${brand}`);
-    console.log(treeNode)
     treeDataProvider.fire();
     explorerNodeManager.treeNode = treeNode;
-    console.log(explorerNodeManager.treeNode)
   } catch (error) {
     console.warn(error);
   }

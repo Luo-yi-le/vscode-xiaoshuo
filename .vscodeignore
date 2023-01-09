@@ -14,3 +14,5 @@ book/**
 *.code-workspace
 
 newpackage.json
+
+*.vsix

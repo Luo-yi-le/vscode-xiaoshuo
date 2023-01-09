@@ -4,9 +4,9 @@ import { statusbar } from './Statusbar';
 import { Commands, TREEVIEW_ID, TREEVIEW_COLLECT } from './config';
 import { store } from './utils/store';
 import workspaceConfiguration from './utils/workspaceConfiguration';
-import { treeDataProvider } from './explorer/treeDataProvider';
-import { registerTreeDataProvider } from './explorer/registerTreeDataProvider';
+import { registerTreeDataProvider, treeDataProvider } from './explorer';
 import * as Path from 'path';
+import { TreeNode } from './explorer/TreeNode';
 import {
   openReaderWebView,
   openLocalDirectory,
@@ -29,7 +29,7 @@ import {
 export async function activate(context: ExtensionContext): Promise<void> {
   console.log('activate');
   // store
-  
+
   store.extensionPath = context.extensionPath;
   store.booksPath = Path.join(context.extensionPath, 'book');
   store.globalStorageUri = context.globalStorageUri;
@@ -38,7 +38,12 @@ export async function activate(context: ExtensionContext): Promise<void> {
     treeDataProvider,
     registerTreeDataProvider,
     // 点击事件
-    commands.registerCommand(Commands.openReaderWebView, openReaderWebView),
+    commands.registerCommand(Commands.openReaderWebView, (treeNode: TreeNode)=>{
+      // if(treeNode.difference == 'book') {
+      //   openReaderWebView(treeNode)
+      // }
+      openReaderWebView(treeNode)
+    }),
     // 刷新
     commands.registerCommand(Commands.localRefresh, () => {
       commands.executeCommand('setContext', 'rwulingshan.panel', 'local');
@@ -91,6 +96,9 @@ export async function activate(context: ExtensionContext): Promise<void> {
     commands.registerCommand(Commands.cancelCollect, cancelCollect),
     // 清空收藏
     commands.registerCommand(Commands.clearCollect, clearCollect),
+
+    commands.registerCommand(Commands.setbiqugeConfig, async ()=>{}),
+
     // 设置
     commands.registerCommand(Commands.setOnlineSite, async () => {
       const onlineSite = workspaceConfiguration().get('onlineSite');

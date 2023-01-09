@@ -1,34 +1,57 @@
 import * as cheerio from 'cheerio';
 import request from '../../../utils/request';
 import { TreeNode, defaultTreeNode } from '../../../explorer/TreeNode';
-import { ReaderDriver as ReaderDriverImplements } from '../../../@types';
+import { ReaderDriver as ReaderDriverImplements, DriverOptions, DriverOptionsConfig } from '../../../@types';
+import * as fs from 'fs';
 
-const DOMAIN = 'https://www.sobiquge.com';
-const DOMAIN2 = 'https://wap.sobiquge.com';
+const DOMAIN = 'https://www.wyill.com';
+const DOMAIN2 = 'https://www.wyill.com/s?q=';
 // https://www.bige7.com/
 class ReaderDriver implements ReaderDriverImplements {
+
+  Options: DriverOptionsConfig | undefined 
+
   public hasChapter() {
     return true;
   }
 
-  public async search(keyword: string): Promise<TreeNode[]> {
+  private async getOptionsPathJson(path: any) {
+    if(!path) {
+      return false;
+    }
+    const isExists = fs.existsSync(path);
+    if (isExists) {
+      const json: DriverOptions = JSON.parse(fs.readFileSync(path, 'utf-8'));
+      if (json) {
+        this.Options = json.bqg;
+        // console.log(this.Options)
+        // console.log(json.bqg)
+      }
+    }
+    
+  }
+
+  public async search(keyword: string, optionsPath?: string): Promise<TreeNode[]> {
+    await this.getOptionsPathJson(optionsPath)
     const result: TreeNode[] = [];
+    const bookList = this.Options?.bookList;
     try {
-      const res = await request.send(DOMAIN2 + '/search.php?q=' + encodeURI(keyword));
+      let url = bookList?.url ? bookList?.url : (this.Options?.url ? this.Options?.url : DOMAIN2)
+      const res = await request.send(url + encodeURI(keyword));
       const $ = cheerio.load(res.body);
-      $('.result-list .result-item.result-game-item').each(function (i: number, elem: any) {
-        const title = $(elem).find('a.result-game-item-title-link span').text();
-        const author = $(elem).find('.result-game-item-info .result-game-item-info-tag:nth-child(1) span:nth-child(2)').text();
-        const path = $(elem).find('a.result-game-item-pic-link').attr().href;
+      $(bookList?.container).each(function (i: number, elem: any) {
         
+        const bookeName = $(elem).find(bookList?.bookeName).text();
+        const bookAuthor = $(elem).find(bookList?.bookAuthor).text();
+        const bookHref = $(elem).find(bookList?.bookHref).attr().href;
         result.push(
           new TreeNode(
             Object.assign({}, defaultTreeNode, {
               type: '.biquge',
-              name: `${title} - ${author}`,
+              name: `${bookeName} - ${bookAuthor}`,
               isDirectory: true,
-              bookName: title,
-              path
+              bookName: bookeName,
+              path: bookHref
             })
           )
         );
@@ -36,20 +59,19 @@ class ReaderDriver implements ReaderDriverImplements {
     } catch (error) {
       console.warn(error);
     }
-    console.log(result)
     return result;
   }
 
   public async getChapter(pathStr: string): Promise<TreeNode[]> {
     const result: TreeNode[] = [];
-    console.log(pathStr)
-    console.log(DOMAIN +pathStr)
+    const chapterList = this.Options?.chapterList;
+    let url = chapterList?.url ? chapterList?.url : (this.Options?.url ? this.Options?.url : DOMAIN2)
     try {
-      const res = await request.send(DOMAIN +pathStr);
+      const res = await request.send(url +pathStr);
       const $ = cheerio.load(res.body);
-      $('#list dd').each(function (i: number, elem: any) {
-        const name = $(elem).find('a').text();
-        const path = $(elem).find('a').attr().href;
+      $(chapterList?.container).each(function (i: number, elem: any) {
+        const name = $(elem).find(chapterList?.chapterName).text();
+        const path = $(elem).find(chapterList?.chapterHref).attr().href;
         result.push(
           new TreeNode(
             Object.assign({}, defaultTreeNode, {
@@ -69,11 +91,24 @@ class ReaderDriver implements ReaderDriverImplements {
 
   public async getContent(pathStr: string): Promise<string> {
     let result = '';
+    const contenthtml = this.Options?.content;
+    let url = contenthtml?.url ? contenthtml?.url : (this.Options?.url ? this.Options?.url : DOMAIN2)
     try {
       const res = await request.send(DOMAIN + pathStr);
       const $ = cheerio.load(res.body);
-      const html = $('#content').html();
-      result = html ? html : '';
+      const html = $(contenthtml?.content).html();
+      let content = html || '';
+      if(content) {
+        if(contenthtml?.ignoreContent && contenthtml?.ignoreContent?.length) {
+          contenthtml?.ignoreContent.forEach(item =>{
+            content = content.replace(item, '')
+          })
+        }
+        // content = html.replace('请收藏本站：https://www.wyill.com。笔趣阁手机版：https://m.wyill.com', '');
+        // content =content.replace('『点此报错』', '');
+        // content =content.replace('『加入书签』', '');
+      }
+      result = content || '';
     } catch (error) {
       console.warn(error);
     }

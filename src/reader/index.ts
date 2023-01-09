@@ -147,10 +147,11 @@ class ReaderDriver {
   };
 
   public search(keyword: string, onlineSite: string): Promise<TreeNode[]> {
+    const optionsPath = workspace.getConfiguration('wulingshan').get('biqugeConfig');
     return new Promise((resolve, reject) => {
       import(this.getSearchDriver(onlineSite))
         .then(({ readerDriver }) => {
-          resolve(readerDriver.search(keyword));
+          resolve(readerDriver.search(keyword, optionsPath));
         })
         .catch((error) => reject(error));
     });

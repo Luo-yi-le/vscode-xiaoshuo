@@ -1,0 +1,27 @@
+{
+    "bqg": {
+        "url": "https://www.wyill.com",
+        "bookList": {
+            "url": "https://www.wyill.com/s?q=",
+            "container": "div.type_show .bookbox",
+            "bookeName": ".box .bookinfo .bookname a",
+            "bookAuthor": ".box .bookinfo .author",
+            "bookHref": ".box .bookinfo .bookname a"
+        },
+        "chapterList": {
+            "url": "https://www.wyill.com",
+            "container": ".listmain dd",
+            "chapterName": "a",
+            "chapterHref": "a"
+        },
+        "content": {
+            "url": "https://www.wyill.com",
+            "content": "#chaptercontent",
+            "ignoreContent": [
+                "请收藏本站：https://www.wyill.com。笔趣阁手机版：https://m.wyill.com",
+                "『点此报错』",
+                "『加入书签』"
+            ]
+        }
+    }
+}

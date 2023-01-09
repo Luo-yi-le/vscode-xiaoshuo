@@ -81,6 +81,11 @@
         "command": "wulingshan.command.clearCollect",
         "title": "清空收藏",
         "category": "wulingshan"
+      },
+      {
+        "command": "wulingshan.command.clearBrowse",
+        "title": "清空记录",
+        "category": "wulingshan"
       }
     ],
     "viewsContainers": {
@@ -101,6 +106,11 @@
         {
           "id": "wulingshan-collect",
           "name": "收藏列表"
+        }
+        ,
+        {
+          "id": "wulingshan-browse",
+          "name": "浏览记录"
         }
       ]
     },
@@ -145,6 +155,12 @@
           "command": "wulingshan.command.clearCollect",
           "when": "view == wulingshan-collect",
           "group": "navigation@1"
+        },
+        {
+          "command": "wulingshan.command.clearBrowse",
+          "when": "view == wulingshan-browse",
+          "group": "navigation@1"
+          
         }
       ],
       "view/item/context": [
@@ -162,8 +178,13 @@
     },
     "configuration": {
       "type": "object",
-      "title": "wulingshan",
+      "title": "wulingshanVscodeXiaoshuo",
       "properties": {
+        "wulingshan.biqugeConfig": {
+          "type": "string",
+          "default": "D:\\Working data\\VSCode\\vscode-xiaoshuo\\src\\biquge.config.json",
+          "description": "笔趣阁配置文件"
+        },
         "wulingshan.onlineSite": {
           "type": "string",
           "default": "笔趣阁, 起点, 追书神器, 番茄, 纵横",
@@ -207,6 +228,7 @@
     "@types/got": "^9.6.9",
     "@types/mocha": "^5.2.6",
     "@types/node": "^10.12.21",
+    "@types/sqlite3": "^3.1.8",
     "@types/vscode": "^1.39.0",
     "@typescript-eslint/eslint-plugin": "^3.0.2",
     "@typescript-eslint/parser": "^3.0.2",
@@ -214,19 +236,19 @@
     "eslint-config-prettier": "^8.3.0",
     "glob": "^7.1.4",
     "mocha": "^6.1.4",
+    "sqlite3": "^5.0.2",
     "tslint": "^5.12.1",
     "typescript": "^4.3.5",
     "vscode-test": "^1.2.0"
   },
   "dependencies": {
-    "@types/sqlite3": "^3.1.8",
     "cheerio": "^1.0.0-rc.3",
     "epub": "^1.2.0",
+    "form-data": "^4.0.0",
     "got": "^9.6.0",
     "hpagent": "^0.1.2",
     "iconv-lite": "^0.5.0",
     "open": "^7.0.0",
-    "sqlite3": "^5.0.2",
     "tough-cookie": "^4.0.0",
     "tslib": "^2.3.0"
   }

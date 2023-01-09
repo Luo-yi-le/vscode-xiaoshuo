@@ -24,7 +24,9 @@ export enum Commands {
   cancelCollect = 'wulingshan.command.cancelCollect',
   lastChapter = 'wulingshan.command.lastChapter',
   nextChapter = 'wulingshan.command.nextChapter',
-  reLoadCookie = 'wulingshan.command.reLoadCookie'
+  reLoadCookie = 'wulingshan.command.reLoadCookie',
+
+  setbiqugeConfig = 'wulingshan.command.setbiqugeConfig',
 }
 export const CommandDriver =(_driver: any = ' ') =>{
   if(_driver == Commands.searchOnline) {
@@ -51,7 +53,7 @@ export enum WebViewMessage {
 
 export const TemplatePath = {
   templateCss: path.join('static', 'template', 'default', 'style.css'),
-  templateHtml: path.join('static', 'template', 'default', 'index.html')
+  templateHtml: path.join('static', 'template', 'default', 'index.html'),
 };
 
 export const TREEVIEW_ID = 'wulingshan-menu';
